@@ -3,6 +3,6 @@ const user = require('../controllers/userController')
 const app = express();
 
 //Crear una nuevaCanción)
-app.post('/user', user.create);
+app.post('/create', user.create);
 
 module.exports = app;

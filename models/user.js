@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const uniqueValidator = require('mongoose-unique-validator');
 
-const profile = require('./profiles');
-
 const allowRoles = {
     values: ['USER'] ,
     message: '{VALUE} no es un rol válido'
@@ -34,10 +32,28 @@ let user = new Schema({
     },
     createdDate: {
         type: Date,
-        required: [true, 'Created Date is required']
+        default: Date.now
     },
     profiles: [{
-        type: profile
+        name: {
+            type: String,
+            default: "",
+            required: [true, 'Name is required']
+        },
+        avatarUrl: {
+            type: String,
+            default: "",
+            required: [true, 'Avatar Url is required']
+        },
+        birthday: {
+            type: Date,
+            default: Date.now,
+            required: [true, 'Birthday is required']
+        },
+        favoriteSongs: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Film'
+        }]
     }]
 });
 

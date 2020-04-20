@@ -6,6 +6,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use('/api', filmRoutes); //Rutas relacionadas con la música
+app.use('/api/film', filmRoutes); //Rutas relacionadas con la música
+app.use('/api/user', userRoutes); //Rutas relacionadas con usuario
 
 module.exports = app;
