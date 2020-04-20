@@ -33,4 +33,4 @@ let film = new Schema({
     }
 })
 
-module.exports = mongoose.model('film', film);
+module.exports = mongoose.model('Film', film);
