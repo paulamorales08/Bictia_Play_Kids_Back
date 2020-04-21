@@ -118,7 +118,50 @@ let user = {
                 user
             })
         })
-    }
+    },
+
+    login: function (req, res) {
+        
+        let body = req.body;
+        User.findOne({ email: body.email },
+            (error, userLogged) => {
+                if (error) {
+                    return res.send({
+                        message: 'Error en el servidor',
+                        statusCode: 500
+                    })
+                }
+                
+                if (!userLogged) {
+                    return res.send({
+                        menssage: 'Por favor veifique los datos ingresados',
+                        statusCode: 400
+                    })
+                } else {
+                    bcrypt.compare(body.password, userLogged.password,
+                        (err, check) => {
+                            
+                            if (check) {
+                                                         
+                                
+                                return res.send({
+                                    menssage: 'Inicio de sesion correcto',
+                                    statusCode: 200,
+                                    dataUser: userLogged,
+                                    token: token
+                                });
+                            } else {
+                                return res.send({
+                                    message: 'Por favor veifique los datos ingresados',
+                                    statusCode: 401
+                                })
+                            }
+                        }
+                    )
+                }
+            }
+        )
+    },
 }
 
 module.exports = user
