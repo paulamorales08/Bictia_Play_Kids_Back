@@ -1,5 +1,5 @@
 const User = require('../models/user');
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 
 let user = {
@@ -12,7 +12,7 @@ let user = {
                 name: body.name,
                 email: body.email,
                 password: body.password,
-                // password: bcrypt.hashSync(body.password, 10),
+                password: bcrypt.hashSync(body.password, 10),
                 role: body.role,
                 birthday: body.birthday,
                 createdDate: body.createdDate,
@@ -121,7 +121,6 @@ let user = {
     },
 
     login: function (req, res) {
-        
         let body = req.body;
         User.findOne({ email: body.email },
             (error, userLogged) => {
@@ -139,16 +138,12 @@ let user = {
                     })
                 } else {
                     bcrypt.compare(body.password, userLogged.password,
-                        (err, check) => {
-                            
+                        (err, check) => {                         
                             if (check) {
-                                                         
-                                
                                 return res.send({
                                     menssage: 'Inicio de sesion correcto',
                                     statusCode: 200,
                                     dataUser: userLogged,
-                                    token: token
                                 });
                             } else {
                                 return res.send({
