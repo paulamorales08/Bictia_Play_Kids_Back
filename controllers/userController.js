@@ -1,11 +1,16 @@
 const User = require('../models/user');
+const nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
 const bcrypt = require('bcryptjs');
+
 
 
 let user = {
     create: function (req, res) {
         //Funcion para crear el usuario
+        console.log("funcion create")
         try {
+            console.log("Holaa try")
             let body = req.body
             //Usamos los campos del modelo
             let newUser = new User({
@@ -18,23 +23,30 @@ let user = {
                 createdDate: body.createdDate,
                 profiles: body.profiles
             })
-
+            
+            
+            
             newUser.save((err, userDB) => {
                 if (err) {
+                    console.log(" Antes")
                     return res.send({
                         statusCode: 400,
                         ok: false,
                         err: `Error al agregar el usuario:  ${err}`
                     })
                 }
+                sendEmail(body.email,body.name)
+                console.log("Despues",body.email)
                 
                 return res.send({
                     statusCode: 200,
                     ok: true,
                     dataUser: userDB
-                })
+               })
+               
             })
         } catch (error) {
+            console.log("Catch");
             res.send({
                 ok: false,
                 error: error
@@ -156,7 +168,38 @@ let user = {
                 }
             }
         )
-    },
+    }
+
+    
+}
+
+function sendEmail(email,name){
+    console.log("entro a send email")
+    var transporter = nodemailer.createTransport(smtpTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        auth: {
+          user: 'bictiapalykids@gmail.com',
+          pass: 'B1ct1@Kids'
+        }
+      }));
+    
+    var mailOptions = {
+      from: 'bictiapalykids@gmail.com',
+      to: email,
+      subject: 'Registro exitoso',
+      html: '<h1>Bienvenid@ '+name+'!!!</h1> <h3>Tu registro se completo satisfactoriamente, ahora puedes disfrutar de todo nuestro contenido.</h3> <h3>Gracias por preferirnos</h3>'
+    };
+    
+    console.log("Enviando email", mailOptions);
+    
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log("ERROR!!!!!!", error);
+      } else {
+        console.log('Correo enviado: ' + info.response);
+      }
+    });
 }
 
 module.exports = user
