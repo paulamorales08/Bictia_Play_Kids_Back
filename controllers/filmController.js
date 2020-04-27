@@ -37,6 +37,62 @@ let films = {
         } catch (error) {
             console.log(error)
         }
+    },
+
+    getFilms: function (req, res) {
+        //Trae las canciones almacenadas
+        try {
+            Film.find().exec((err,videos) =>{
+                if (err || !videos) {
+                    return res.status(400).send({
+                        statusCode: 400,
+                        status: 'Error',
+                        message: 'No hay videos existentes'
+                    });
+                }
+                return res.status(200).send({
+                    statusCode: 200,
+                    status: 'Success',
+                    films: videos
+                })
+            })
+        } catch (error) {
+            console.log(error);
+        }
+        
+    },
+
+    typeHead: function (req, res) {
+        //Trae las canciones por el nombre
+        try {
+            let name = req.body.name;
+            Film.find({
+                'name': {
+                    "$regex": `${name}`, //Permite buscar coincidencias en las consultas a la BD.
+                    "$options": "i" //Permite que $regex no sea sencible a las mayusculas y las minusculas.
+                } 
+            }).exec( (err, coincidences) =>{
+                if (err) {
+                    return res.status(500).send({
+                        message: `Error en el servidor ${err}`,
+                        statusCode: 500
+                    })
+                }else if (coincidences.length === 0) {
+                    return res.status(400).send({
+                        message: 'No se ha encontrado un video con ese nombre',
+                        statusCode: 400
+                    })
+                }else{
+                    return res.status(200).send({
+                        statusCode: 200,
+                        status: 'Success',
+                        results: coincidences
+                    })
+                }
+            } )
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
