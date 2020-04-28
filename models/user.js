@@ -50,7 +50,7 @@ let user = new Schema({
             default: Date.now,
             required: [true, 'Birthday is required']
         },
-        favoriteSongs: [{
+        favoriteFilms: [{
             type: Schema.Types.ObjectId,
             ref: 'Film'
         }]

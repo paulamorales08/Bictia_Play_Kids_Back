@@ -6,6 +6,8 @@ const app = express();
 app.post('/create', user.create);
 app.post('/addProfile/:id', user.addProfile);
 app.get('/getProfiles/:id', user.getProfiles);
-app.post('/login', user.login)
+app.post('/login', user.login);
+app.get('/getProfile/:id', user.getOneProfile);
+app.put('/addFavorite/:id', user.addFavorite);
 
 module.exports = app;

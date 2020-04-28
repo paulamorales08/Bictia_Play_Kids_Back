@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-
+const mongoose = require('mongoose');
 
 let user = {
     create: function (req, res) {
@@ -63,12 +63,12 @@ let user = {
                 });
             }
             
-            let newFavoriteList = [];
-            newFavoriteList = user.profiles;
-            newFavoriteList.push(profile);
-            console.log(newFavoriteList)
+            let newProfiles = [];
+            newProfiles = user.profiles;
+            newProfiles.push(profile);
 
-            User.findByIdAndUpdate(userId, {profiles: newFavoriteList}, (err)=> {
+
+            User.findByIdAndUpdate(userId, {profiles: newProfiles}, (err)=> {
                 if(err){
                     return res.send({
                         statusCode: 500,
@@ -119,7 +119,28 @@ let user = {
             })
         })
     },
-
+    getOneProfile: function(req, res){
+        let userId = req.params.id;
+        let profileName = req.body.name;
+        User.findOne({"_id" : userId, "profiles.name": profileName }, (err, user) => {
+            if(err) {
+                return res.send({
+                    statusCode: 500,
+                    message: 'Error en el servidor'
+                })
+            }
+            if(!user) {
+                return res.send({
+                    statusCode: 400,
+                    message: 'No hay un perfil registrado'
+                })
+            }
+            return res.send({
+                statusCode: 200,
+                user
+            })
+        })
+    },
     login: function (req, res) {
         let body = req.body;
         User.findOne({ email: body.email },
@@ -157,6 +178,68 @@ let user = {
             }
         )
     },
+    addFavorite: function(req,res){
+        let userId = req.params.id;
+        let profileName = req.body.name;
+        let filmId = mongoose.Types.ObjectId(req.body.filmId);
+        User.findById(userId).exec((err, user)=> {
+            if(err){
+                return res.send({
+                    statusCode: 500,
+                    message: 'Error en el servidor'
+                });
+            }
+            if(!user){
+                return res.send({
+                    statusCode: 400,
+                    message: 'No existe el usuario'
+                });
+            }
+            
+            let newFavoriteList = [];
+            for (let i = 0; i < user.profiles.length; i++) {
+                if (user.profiles[i].name === profileName) {
+                    newFavoriteList = user.profiles[i].favoriteFilms;
+                    newFavoriteList.push(filmId);
+                }  
+            }
+            
+            
+            User.findOneAndUpdate({"_id" : userId, "profiles.name": profileName}, { $set: { "profiles.$.favoriteFilms" : newFavoriteList} }, (err, user) => {
+                if(err){
+                    return res.send({
+                        statusCode: 500,
+                        message: 'Error en el servidor',
+                        error: err
+                    });
+                }
+                if(!user){
+                    return res.send({
+                        statusCode: 400,
+                        message: "Perfil no registrado"
+                    })
+                }
+                User.findById(userId)
+                    .exec((err, user)=>{
+                        if (err) {
+                            return res.send({
+                                status: 500,
+                                message: 'Error en la peticón'
+                            });
+                        }
+                        if (!user) {
+                            return res.send({
+                                message: 'No existe el usuario'
+                            });
+                        }
+                        return res.send({
+                            statusCode: 200,
+                            user
+                        })
+                    });
+            })
+        });
+    }
 }
 
 module.exports = user
