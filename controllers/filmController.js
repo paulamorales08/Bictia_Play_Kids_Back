@@ -45,11 +45,13 @@ let films = {
             Film.find().exec((err,videos) =>{
                 if (err || !videos) {
                     return res.status(400).send({
+                        statusCode: 400,
                         status: 'Error',
                         message: 'No hay videos existentes'
                     });
                 }
                 return res.status(200).send({
+                    statusCode: 200,
                     status: 'Success',
                     films: videos
                 })
