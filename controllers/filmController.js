@@ -65,7 +65,7 @@ let films = {
     typeHead: function (req, res) {
         //Trae los videos por el nombre
         try {
-            let name = req.body.name;
+            let name = req.query.name;
             Film.find({
                 'name': {
                     "$regex": `${name}`, //Permite buscar coincidencias en las consultas a la BD.
