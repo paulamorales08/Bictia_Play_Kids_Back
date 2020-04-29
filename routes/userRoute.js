@@ -10,5 +10,6 @@ app.post('/login', user.login);
 app.get('/getProfile/:id', user.getOneProfile);
 app.put('/addFavorite/:id', user.addFavorite);
 app.put('/delFavorite/:id', user.removeFavorite);
+app.get('/favoriteFilms/:id', user.listFavoriteFilms);
 
 module.exports = app;

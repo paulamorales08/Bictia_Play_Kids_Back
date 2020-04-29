@@ -1,9 +1,9 @@
 const User = require('../models/user');
+const Films = require('../models/films');
 const nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-
 
 let user = {
     create: function (req, res) {
@@ -305,6 +305,48 @@ let user = {
                     });
             })
         });
+    },
+    listFavoriteFilms: function(req, res){
+        let userId = req.params.id
+        let profileName = req.body.name;
+        User.findById(userId, (err, user)=> {
+            if(err){
+                return res.send({
+                    statusCode: 500,
+                    message: 'Error en el servidor'
+                })
+            }
+            if(!user){
+                return res.send({
+                    statusCode: 400,
+                    message: 'El usuario no existe'
+                })
+            }
+            Films.populate(user, {path: "profiles.favoriteFilms"}, (err, user)=>{
+                if(err){
+                    return res.send({
+                        statusCode: 500,
+                        message: 'Error en el servidor'
+                    })
+                }
+                if(!user){
+                    return res.send({
+                        statusCode: 400,
+                        message: 'Las canciones no existen'
+                    })
+                }
+                let profile;
+                for (let i = 0; i < user.profiles.length; i++) {
+                    if (user.profiles[i].name === profileName) {
+                        profile = user.profiles[i]
+                    }                    
+                }
+                return res.send({
+                    statusCode: 200,
+                    profile 
+                })
+            })
+        }); 
     }
 }
 
