@@ -356,16 +356,16 @@ function sendEmail(email,name){
         service: 'gmail',
         host: 'smtp.gmail.com',
         auth: {
-          user: 'bictiapalykids@gmail.com', 
+          user: 'bictiaplaygroup@gmail.com', 
           pass: 'B1ct1@Kids'
         }
       }));
     
     var mailOptions = {
-      from: 'bictiapalykids@gmail.com',
+      from: 'bictiaplaygroup@gmail.com',
       to: email,
       subject: 'Registro exitoso',
-      html: '<h1>Bienvenid@ '+name+'!!!</h1> <h3>Tu registro se completo satisfactoriamente, ahora puedes disfrutar de todo nuestro contenido.</h3> <h3>Gracias por preferirnos</h3>'
+      html: '<center><img width="150px" alt="BictiaPlayKids" src="http://xtrategik.net/logo.png"><h1>Bienvenid@ '+name+'!!!</h1> <h3>Tu registro se completó satisfactoriamente, ahora puedes disfrutar de todo nuestro contenido.</h3> <h3>Gracias por preferirnos</h3><br><br><span style="font-size: 14px color: grey;">2020 - Bictia Play Kids - Todos los derechos reservados.</span></center>'
     };
     
     console.log("Enviando email", mailOptions);
