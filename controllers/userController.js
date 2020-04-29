@@ -30,7 +30,7 @@ let user = {
                         err: `Error al agregar el usuario:  ${err}`
                     })
                 }
-                sendEmail(body.email,body.name)
+                sendEmail(body.email,body.name) // se envia correo cuando se registra un usuario
                 
                 return res.send({
                     statusCode: 200,
@@ -356,7 +356,7 @@ function sendEmail(email,name){
         service: 'gmail',
         host: 'smtp.gmail.com',
         auth: {
-          user: 'bictiapalykids@gmail.com',
+          user: 'bictiapalykids@gmail.com', 
           pass: 'B1ct1@Kids'
         }
       }));
