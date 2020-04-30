@@ -1,5 +1,5 @@
 const Film = require('../models/films');
-
+const filmCtrl = {};
 
 let films = {
 
@@ -39,10 +39,20 @@ let films = {
         }
     },
 
-    delete: function (req, res){
-        
+  /*   delete: function (req, res){
+        try{
+            Film.findByIdAndRemove(req.params.id) =>
+        }
+    }, */
+/* 
+    deleteFilm : function (req, res) {
+        try{Film.findByIdAndRemove(req.params.id);
+
+        res.json({status: 'Video Eliminado'})
+        }
     },
 
+ */
     getFilms: function (req, res) {
         //Trae los films almacenados
         try {
