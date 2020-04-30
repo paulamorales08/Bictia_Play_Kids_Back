@@ -357,8 +357,9 @@ let user = {
     },
     editProfile: function (req, res) {
         let userId = req.params.id
-        let password = bcrypt.hashSync(body.password, 10)
+        let password = req.body.password;
         let profileName = req.body.name;
+        let newName = req.body.newName;
 
         User.findById(userId).exec((err, user) => {
             if (err) {
@@ -373,11 +374,11 @@ let user = {
                     message: 'No existe el usuario'
                 });
             }
-
+	
             bcrypt.compare(password, user.password,
                 (err, check) => {
                     if (check) {
-                        User.findByIdAndUpdate({ "_id": userId, "profiles.name": profileName }, (err, userUpdate) => {
+                        User.findOneAndUpdate({ "_id": userId, "profiles.name": profileName }, { $set: { "profiles.$.name": newName } }, (err, user) => {
                             if (err) {
                                 return res.send({
                                     statusCode: 500,
@@ -385,17 +386,16 @@ let user = {
                                     error: err
                                 });
                             }
-                            if (!userUpdate) {
+                            if (!user) {
                                 return res.send({
                                     statusCode: 400,
-                                    message: "Error al actualizar perfil"
-                                });
+                                    message: "Perfil no registrado"
+                                })
                             }
-
                             return res.send({
                                 statusCode: 200,
-                                message: "Perfil actualizado"
-                            });
+                                user
+                            })
                         });
                     } else {
                         return res.send({
@@ -403,10 +403,10 @@ let user = {
                             statusCode: 401
                         });
                     }
-
-                });
+            });
         });
     }
+
 }
 
 function sendEmail(email, name) {
