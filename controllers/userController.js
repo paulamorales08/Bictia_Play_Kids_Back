@@ -21,7 +21,7 @@ let user = {
                 createdDate: body.createdDate,
                 profiles: body.profiles
             })
-            
+
             newUser.save((err, userDB) => {
                 if (err) {
                     return res.send({
@@ -30,14 +30,14 @@ let user = {
                         err: `Error al agregar el usuario:  ${err}`
                     })
                 }
-                sendEmail(body.email,body.name) // se envia correo cuando se registra un usuario
-                
+                sendEmail(body.email, body.name) // se envia correo cuando se registra un usuario
+
                 return res.send({
                     statusCode: 200,
                     ok: true,
                     dataUser: userDB
-               })
-               
+                })
+
             })
         } catch (error) {
             res.send({
@@ -46,7 +46,7 @@ let user = {
             })
         }
     },
-    addProfile: function(req,res){
+    addProfile: function (req, res) {
         let userId = req.params.id;
         let profile = {
             name: req.body.name,
@@ -54,27 +54,27 @@ let user = {
             birthday: req.body.birthday
         }
 
-        User.findById(userId).exec((err, user)=> {
-            if(err){
+        User.findById(userId).exec((err, user) => {
+            if (err) {
                 return res.send({
                     statusCode: 500,
                     message: 'Error en el servidor'
                 });
             }
-            if(!user){
+            if (!user) {
                 return res.send({
                     statusCode: 400,
                     message: 'No existe el usuario'
                 });
             }
-            
+
             let newProfiles = [];
             newProfiles = user.profiles;
             newProfiles.push(profile);
 
 
-            User.findByIdAndUpdate(userId, {profiles: newProfiles}, (err)=> {
-                if(err){
+            User.findByIdAndUpdate(userId, { profiles: newProfiles }, (err) => {
+                if (err) {
                     return res.send({
                         statusCode: 500,
                         message: 'Error al realizar petición',
@@ -82,7 +82,7 @@ let user = {
                     });
                 }
                 User.findById(userId)
-                    .exec((err, user)=>{
+                    .exec((err, user) => {
                         if (err) {
                             return res.send({
                                 status: 500,
@@ -103,16 +103,16 @@ let user = {
             })
         });
     },
-    getProfiles: function(req, res){
+    getProfiles: function (req, res) {
         let userId = req.params.id;
-        User.findById(userId, "profiles", (err, user)=> {
-            if(err){
+        User.findById(userId, "profiles", (err, user) => {
+            if (err) {
                 return res.send({
                     statusCode: 500,
                     message: 'Error en el servidor'
                 })
             }
-            if(!user){
+            if (!user) {
                 return res.send({
                     statusCode: 400,
                     message: 'El usuario no existe'
@@ -124,17 +124,17 @@ let user = {
             })
         })
     },
-    getOneProfile: function(req, res){
+    getOneProfile: function (req, res) {
         let userId = req.params.id;
         let profileName = req.body.name;
-        User.findOne({"_id" : userId, "profiles.name": profileName }, (err, user) => {
-            if(err) {
+        User.findOne({ "_id": userId, "profiles.name": profileName }, (err, user) => {
+            if (err) {
                 return res.send({
                     statusCode: 500,
                     message: 'Error en el servidor'
                 })
             }
-            if(!user) {
+            if (!user) {
                 return res.send({
                     statusCode: 400,
                     message: 'No hay un perfil registrado'
@@ -156,7 +156,7 @@ let user = {
                         statusCode: 500
                     })
                 }
-                
+
                 if (!userLogged) {
                     return res.send({
                         menssage: 'Por favor veifique los datos ingresados',
@@ -164,7 +164,7 @@ let user = {
                     })
                 } else {
                     bcrypt.compare(body.password, userLogged.password,
-                        (err, check) => {                         
+                        (err, check) => {
                             if (check) {
                                 return res.send({
                                     menssage: 'Inicio de sesion correcto',
@@ -183,49 +183,49 @@ let user = {
             }
         )
     },
-    addFavorite: function(req,res){
+    addFavorite: function (req, res) {
         let userId = req.params.id;
         let profileName = req.body.name;
         let filmId = mongoose.Types.ObjectId(req.body.filmId);
-        User.findById(userId).exec((err, user)=> {
-            if(err){
+        User.findById(userId).exec((err, user) => {
+            if (err) {
                 return res.send({
                     statusCode: 500,
                     message: 'Error en el servidor'
                 });
             }
-            if(!user){
+            if (!user) {
                 return res.send({
                     statusCode: 400,
                     message: 'No existe el usuario'
                 });
             }
-            
+
             let newFavoriteList = [];
             for (let i = 0; i < user.profiles.length; i++) {
                 if (user.profiles[i].name === profileName) {
                     newFavoriteList = user.profiles[i].favoriteFilms;
                     newFavoriteList.push(filmId);
-                }  
+                }
             }
-            
-            
-            User.findOneAndUpdate({"_id" : userId, "profiles.name": profileName}, { $set: { "profiles.$.favoriteFilms" : newFavoriteList} }, (err, user) => {
-                if(err){
+
+
+            User.findOneAndUpdate({ "_id": userId, "profiles.name": profileName }, { $set: { "profiles.$.favoriteFilms": newFavoriteList } }, (err, user) => {
+                if (err) {
                     return res.send({
                         statusCode: 500,
                         message: 'Error en el servidor',
                         error: err
                     });
                 }
-                if(!user){
+                if (!user) {
                     return res.send({
                         statusCode: 400,
                         message: "Perfil no registrado"
                     })
                 }
                 User.findById(userId)
-                    .exec((err, user)=>{
+                    .exec((err, user) => {
                         if (err) {
                             return res.send({
                                 status: 500,
@@ -245,19 +245,19 @@ let user = {
             })
         });
     },
-    removeFavorite: function(req,res) {
+    removeFavorite: function (req, res) {
         let userId = req.params.id;
         let profileName = req.body.name;
         let filmId = req.body.filmId;
 
-        User.findById(userId, (err, user)=> {
-            if(err){
+        User.findById(userId, (err, user) => {
+            if (err) {
                 return res.send({
                     statusCode: 500,
                     message: 'Error en el servidor'
                 });
             }
-            if(!user){
+            if (!user) {
                 return res.send({
                     statusCode: 400,
                     message: 'No existe el usuario'
@@ -269,24 +269,24 @@ let user = {
                 if (user.profiles[i].name === profileName) {
                     newFavoriteList = user.profiles[i].favoriteFilms;
                     newFavoriteList = newFavoriteList.filter(item => item != filmId);
-                }  
+                }
             }
-            User.findOneAndUpdate({"_id" : userId, "profiles.name": profileName}, { $set: { "profiles.$.favoriteFilms" : newFavoriteList} }, (err, user) => {
-                if(err){
+            User.findOneAndUpdate({ "_id": userId, "profiles.name": profileName }, { $set: { "profiles.$.favoriteFilms": newFavoriteList } }, (err, user) => {
+                if (err) {
                     return res.send({
                         statusCode: 500,
                         message: 'Error en el servidor',
                         error: err
                     });
                 }
-                if(!user){
+                if (!user) {
                     return res.send({
                         statusCode: 400,
                         message: "Perfil no registrado"
                     })
                 }
                 User.findById(userId)
-                    .exec((err, user)=>{
+                    .exec((err, user) => {
                         if (err) {
                             return res.send({
                                 status: 500,
@@ -306,30 +306,30 @@ let user = {
             })
         });
     },
-    listFavoriteFilms: function(req, res){
+    listFavoriteFilms: function (req, res) {
         let userId = req.params.id
         let profileName = req.body.name;
-        User.findById(userId, (err, user)=> {
-            if(err){
+        User.findById(userId, (err, user) => {
+            if (err) {
                 return res.send({
                     statusCode: 500,
                     message: 'Error en el servidor'
                 })
             }
-            if(!user){
+            if (!user) {
                 return res.send({
                     statusCode: 400,
                     message: 'El usuario no existe'
                 })
             }
-            Films.populate(user, {path: "profiles.favoriteFilms"}, (err, user)=>{
-                if(err){
+            Films.populate(user, { path: "profiles.favoriteFilms" }, (err, user) => {
+                if (err) {
                     return res.send({
                         statusCode: 500,
                         message: 'Error en el servidor'
                     })
                 }
-                if(!user){
+                if (!user) {
                     return res.send({
                         statusCode: 400,
                         message: 'Las canciones no existen'
@@ -339,43 +339,95 @@ let user = {
                 for (let i = 0; i < user.profiles.length; i++) {
                     if (user.profiles[i].name === profileName) {
                         profile = user.profiles[i]
-                    }                    
+                    }
                 }
                 return res.send({
                     statusCode: 200,
-                    profile 
+                    profile
                 })
             })
-        }); 
+        });
+    },
+    editProfile: function (req, res) {
+        let userId = req.params.id
+        let password = bcrypt.hashSync(body.password, 10)
+        let profileName = req.body.name;
+
+        User.findById(userId).exec((err, user) => {
+            if (err) {
+                return res.send({
+                    statusCode: 500,
+                    message: 'Error en el servidor'
+                });
+            }
+            if (!user) {
+                return res.send({
+                    statusCode: 400,
+                    message: 'No existe el usuario'
+                });
+            }
+
+            bcrypt.compare(password, user.password,
+                (err, check) => {
+                    if (check) {
+                        User.findByIdAndUpdate({ "_id": userId, "profiles.name": profileName }, (err, userUpdate) => {
+                            if (err) {
+                                return res.send({
+                                    statusCode: 500,
+                                    message: 'Error en el servidor',
+                                    error: err
+                                });
+                            }
+                            if (!userUpdate) {
+                                return res.send({
+                                    statusCode: 400,
+                                    message: "Error al actualizar perfil"
+                                });
+                            }
+
+                            return res.send({
+                                statusCode: 200,
+                                message: "Perfil actualizado"
+                            });
+                        });
+                    } else {
+                        return res.send({
+                            message: "Contraseña incorrecta",
+                            statusCode: 401
+                        });
+                    }
+
+                });
+        });
     }
 }
 
-function sendEmail(email,name){
+function sendEmail(email, name) {
     console.log("entro a send email")
     var transporter = nodemailer.createTransport(smtpTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
         auth: {
-          user: 'bictiaplaygroup@gmail.com', 
-          pass: 'B1ct1@Kids'
+            user: 'bictiaplaygroup@gmail.com',
+            pass: 'B1ct1@Kids'
         }
-      }));
-    
+    }));
+
     var mailOptions = {
-      from: 'bictiaplaygroup@gmail.com',
-      to: email,
-      subject: 'Registro exitoso',
-      html: '<center><img width="150px" alt="BictiaPlayKids" src="http://xtrategik.net/logo.png"><h1>Bienvenid@ '+name+'!!!</h1> <h3>Tu registro se completó satisfactoriamente, ahora puedes disfrutar de todo nuestro contenido.</h3> <h3>Gracias por preferirnos</h3><br><br><span style="font-size: 14px color: grey;">2020 - Bictia Play Kids - Todos los derechos reservados.</span></center>'
+        from: 'bictiaplaygroup@gmail.com',
+        to: email,
+        subject: 'Registro exitoso',
+        html: '<center><img width="150px" alt="BictiaPlayKids" src="http://xtrategik.net/logo.png"><h1>Bienvenid@ ' + name + '!!!</h1> <h3>Tu registro se completó satisfactoriamente, ahora puedes disfrutar de todo nuestro contenido.</h3> <h3>Gracias por preferirnos</h3><br><br><span style="font-size: 14px color: grey;">2020 - Bictia Play Kids - Todos los derechos reservados.</span></center>'
     };
-    
+
     console.log("Enviando email", mailOptions);
-    
+
     transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log("ERROR!!!!!!", error);
-      } else {
-        console.log('Correo enviado: ' + info.response);
-      }
+        if (error) {
+            console.log("ERROR!!!!!!", error);
+        } else {
+            console.log('Correo enviado: ' + info.response);
+        }
     });
 }
 
