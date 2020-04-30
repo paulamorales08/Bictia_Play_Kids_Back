@@ -4,10 +4,10 @@ const Film = require('../models/films');
 let films = {
 
     create: function (req, res) {
-        //Agregar nueva canción a la base de datos
+        //Agregar un nuevo film 
         try {
             let body = req.body
-            //Usando modelo de nueva canción
+            //Usando modelo para nuevo film
             let newFilm = new Film({
                 name:  body.name,
                 category: body.category,
@@ -40,7 +40,7 @@ let films = {
     },
 
     getFilms: function (req, res) {
-        //Trae las canciones almacenadas
+        //Trae los films almacenados
         try {
             Film.find().exec((err,videos) =>{
                 if (err || !videos) {
@@ -63,9 +63,9 @@ let films = {
     },
 
     typeHead: function (req, res) {
-        //Trae las canciones por el nombre
+        //Trae los videos por el nombre
         try {
-            let name = req.body.name;
+            let name = req.query.name;
             Film.find({
                 'name': {
                     "$regex": `${name}`, //Permite buscar coincidencias en las consultas a la BD.

@@ -2,7 +2,7 @@ const express = require('express')
 const film = require('../controllers/filmController')
 const app = express();
 
-//Crear una nuevaCanción)
+//Crear nuevo film)
 app.post('/create', film.create);
 //Trae los videos de la BD
 app.get('/', film.getFilms);
