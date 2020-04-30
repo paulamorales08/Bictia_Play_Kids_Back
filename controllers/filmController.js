@@ -12,10 +12,10 @@ let films = {
                 name:  body.name,
                 category: body.category,
                 type: body.type,
-                filmUrl: body.filmUrl,
-                imageUrl: body.imageUrl,
-                createdDate: body.createdDate,
-                createdBy: body.createdBy
+                url: body.url,
+                urlImage: body.urlImage,
+                createDate: body.createDate,
+                createBy: body.createBy
             })
             
             newFilm.save((err, filmDB) => {
@@ -37,6 +37,10 @@ let films = {
         } catch (error) {
             console.log(error)
         }
+    },
+
+    delete: function (req, res){
+        
     },
 
     getFilms: function (req, res) {
