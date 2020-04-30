@@ -15,19 +15,19 @@ let film = new Schema({
         type: String,
         required: [true, 'Film type is required']
     },
-    filmUrl: {
+    url: {
         type: String,
         required: [true, 'Film url is required']
     },
-    imageUrl: {
+    urlImage: {
         type: String,
         required: [true, 'Image url is required']
     },
-    createdDate: {
+    createDate: {
         type: Date,
-        required: [true, 'Film createdDate date is required']
+        default: Date.now
     },
-    createdBy:{
+    createBy:{
         type: String,
         required: [true, 'Film createdBy user is required']
     }
