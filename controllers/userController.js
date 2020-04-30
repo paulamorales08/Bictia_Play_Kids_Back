@@ -187,6 +187,7 @@ let user = {
         let userId = req.params.id;
         let profileName = req.body.name;
         let filmId = mongoose.Types.ObjectId(req.body.filmId);
+        console.log(req.body);
         User.findById(userId).exec((err, user)=> {
             if(err){
                 return res.send({
@@ -201,14 +202,21 @@ let user = {
                 });
             }
             
+            
+            
             let newFavoriteList = [];
             for (let i = 0; i < user.profiles.length; i++) {
                 if (user.profiles[i].name === profileName) {
                     newFavoriteList = user.profiles[i].favoriteFilms;
+                    if(newFavoriteList.includes(filmId)) {
+                    	return res.send({
+                    	    statusCode: 400,
+                    	    message: 'La cancion ya esta en favoritos'
+                    	});
+                    }                    
                     newFavoriteList.push(filmId);
                 }  
             }
-            
             
             User.findOneAndUpdate({"_id" : userId, "profiles.name": profileName}, { $set: { "profiles.$.favoriteFilms" : newFavoriteList} }, (err, user) => {
                 if(err){
@@ -308,7 +316,6 @@ let user = {
     },
     listFavoriteFilms: function(req, res){
         let userId = req.params.id
-        let profileName = req.body.name;
         User.findById(userId, (err, user)=> {
             if(err){
                 return res.send({
@@ -335,15 +342,9 @@ let user = {
                         message: 'Las canciones no existen'
                     })
                 }
-                let profile;
-                for (let i = 0; i < user.profiles.length; i++) {
-                    if (user.profiles[i].name === profileName) {
-                        profile = user.profiles[i]
-                    }                    
-                }
                 return res.send({
                     statusCode: 200,
-                    profile 
+                    user 
                 })
             })
         }); 
